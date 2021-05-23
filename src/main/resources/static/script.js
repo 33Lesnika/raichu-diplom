@@ -37,3 +37,24 @@ function sendData() {
     xhr.open("POST", "http://localhost/word");
     xhr.send(formData);
 }
+
+
+function getCurrentUser(){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            currentUserCallback(xhr.responseText);
+        }
+    }
+    xhr.open("GET", "http://localhost/api/user/me");
+    xhr.send();
+}
+
+function currentUserCallback(response) {
+    const user = JSON.parse(response);
+    if (user.username === 'admin'){
+        document.getElementById("nav").insertAdjacentHTML("beforeend", `<a href='/admin/index.html'>Admin panel</a>`);
+    }
+}
+
+getCurrentUser();

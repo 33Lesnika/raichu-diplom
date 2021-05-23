@@ -1,10 +1,11 @@
-package xyz.raichu.diplom;
+package xyz.raichu.diplom.runner;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import xyz.raichu.diplom.exception.NotFoundException;
 import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.service.UserService;
 

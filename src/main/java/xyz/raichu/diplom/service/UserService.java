@@ -1,6 +1,7 @@
 package xyz.raichu.diplom.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.repository.UserRepository;
@@ -45,5 +46,9 @@ public class UserService {
     @Transactional
     public void delete(String username){
         userRepository.findByUsername(username).ifPresent(userRepository::delete);
+    }
+
+    public User getCurrentUser(){
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

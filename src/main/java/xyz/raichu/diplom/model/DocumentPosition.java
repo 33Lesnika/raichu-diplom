@@ -1,10 +1,10 @@
-package xyz.raichu.diplom;
+package xyz.raichu.diplom.model;
 
 import lombok.Data;
 
 /**
  * 06.05.2021
- * xyz.raichu.diplom.DocumentPosition
+ * xyz.raichu.diplom.model.DocumentPosition
  * 18:06
  */
 @Data
