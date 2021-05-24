@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0">
+    <script src="/js/bootstrap.bundle.min.js"
+            integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row shadow w-50 mx-auto bg-white rounded">
+        <div class="col p-3">
+            <div class="row">
+                <label for="username">Enter username</label><input class="form-control" type="text" id="username"/>
+            </div>
+            <div class="row">
+                <label for="pass">Enter password</label><input class="form-control" type="password" onkeyup='check();' id="pass"/>
+            </div>
+            <div class="row">
+                <label for="passRepeat">Repeat password</label><input class="form-control" type="password" onkeyup='check();' id="passRepeat"/>
+            </div>
+            <div class="row" id="matchPasswords" disabled="true">
+                <span style="color: #dc3545">Passwords doesn't match!</span>
+            </div>
+            <div class="row ">
+                <button type="button" class="btn btn-primary" id="register" name="send" onclick="register()">Search</button>
+            </div>
+            <div class="row">
+                <span id="status"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/registration.js" lang="javascript"></script>
+</body>
+</html>
