@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.exception.AlreadyExistsException;
+import xyz.raichu.diplom.exception.NotFoundException;
 import xyz.raichu.diplom.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -28,30 +29,30 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User getById(Long id){
+    public User getById(Long id) {
         return userRepository.getOne(id);
     }
 
-    public List<User> getAll(){
+    public List<User> getAll() {
         return userRepository.findAll();
     }
 
     @Transactional
-    public User save(User user){
+    public User save(User user) {
         return userRepository.save(user);
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
     @Transactional
-    public void delete(String username){
+    public void delete(String username) {
         userRepository.findByUsername(username).ifPresent(userRepository::delete);
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
@@ -59,7 +60,7 @@ public class UserService {
         userRepository
                 .findByUsername(registration.getUsername())
                 .ifPresent(u -> {
-                    throw new AlreadyExistsException("User with username '" + registration.getUsername()+ "' already exists");
+                    throw new AlreadyExistsException("User with username '" + registration.getUsername() + "' already exists");
                 });
         // Avoid malformed request
         registration.setId(null);
@@ -69,5 +70,12 @@ public class UserService {
         registration.setCredentialsNonExpired(true);
         registration.setPassword(passwordEncoder.encode(registration.getPassword()));
         return userRepository.save(registration);
+    }
+
+    @Transactional
+    public User toggle(Long id) {
+        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        user.setEnabled(!user.isEnabled());
+        return userRepository.save(user);
     }
 }

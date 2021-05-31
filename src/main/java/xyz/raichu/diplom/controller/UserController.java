@@ -1,10 +1,10 @@
 package xyz.raichu.diplom.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.service.UserService;
+
+import java.util.List;
 
 /**
  * 24.05.2021
@@ -21,8 +21,18 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping()
+    public List<User> get(){
+        return userService.getAll();
+    }
+
     @GetMapping("/me")
     public User getMe(){
         return userService.getCurrentUser();
+    }
+
+    @PostMapping("/{id}")
+    public User toggle(@PathVariable Long id){
+        return userService.toggle(id);
     }
 }
