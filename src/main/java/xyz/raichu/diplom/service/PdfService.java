@@ -1,5 +1,6 @@
 package xyz.raichu.diplom.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -28,10 +29,12 @@ public class PdfService {
 
     private final UserService userService;
     private final FileRepository fileRepository;
+    private final ObjectMapper objectMapper;
 
-    public PdfService(UserService userService, FileRepository fileRepository) {
+    public PdfService(UserService userService, FileRepository fileRepository, ObjectMapper objectMapper) {
         this.userService = userService;
         this.fileRepository = fileRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Transactional
@@ -68,7 +71,7 @@ public class PdfService {
                                 phrase.setText(givenWord);
                                 file.getPhrases().add(phrase);
                             }
-                            phrase.getCodes().add(new Code(null, dp.toString()));
+                            phrase.getCodes().add(new Code(null, objectMapper.writeValueAsString(dp)));
 //                            positions.add(dp);
                         }
                     }

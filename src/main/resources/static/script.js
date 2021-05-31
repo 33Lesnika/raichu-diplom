@@ -80,7 +80,7 @@ function sendData() {
             callback(xhr.responseText);
         }
     }
-    xhr.open("POST", "http://localhost/word");
+    xhr.open("POST", "/word");
     xhr.send(formData);
 }
 
@@ -92,7 +92,7 @@ function getCurrentUser() {
             currentUserCallback(xhr.responseText);
         }
     }
-    xhr.open("GET", "http://localhost/api/user/me");
+    xhr.open("GET", "/api/user/me");
     xhr.send();
 }
 
