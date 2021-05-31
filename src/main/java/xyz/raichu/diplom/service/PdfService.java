@@ -14,8 +14,6 @@ import xyz.raichu.diplom.repository.FileRepository;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -37,8 +35,8 @@ public class PdfService {
     }
 
     @Transactional
-    public List<DocumentPosition> findFordPosition(InputStream is, Set<String> givenWords, String filename) throws IOException {
-        List<DocumentPosition> positions = new ArrayList<>();
+    public File findFordPosition(InputStream is, Set<String> givenWords, String filename) throws IOException {
+//        List<DocumentPosition> positions = new ArrayList<>();
         File file = new File();
         file.setName(filename);
         file.setUser(userService.getCurrentUser());
@@ -71,14 +69,14 @@ public class PdfService {
                                 file.getPhrases().add(phrase);
                             }
                             phrase.getCodes().add(new Code(null, dp.toString()));
-                            positions.add(dp);
+//                            positions.add(dp);
                         }
                     }
                     lineNumber++;
                 }
             }
         }
-        fileRepository.save(file);
-        return positions;
+//        fileRepository.save(file);
+        return file;
     }
 }
