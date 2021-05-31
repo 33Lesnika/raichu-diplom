@@ -1,71 +1,55 @@
 let i = 0;
 let file = {};
-
 function callback(response) {
-    let file = JSON.parse(response);
-    file.phrases.forEach(p => {
-        p.id = i++;
-
-    });
-}
-
-function phraseTemplate(model) {
-    return `
-     <div class="accordion-item">
-            <h2 class="accordion-header" id="item-${model.id}">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${model.id}"
-                        aria-expanded="true" aria-controls="collapseOne">
-                    ${model.text}
-                </button>
-            </h2>
-            <div id="collapse-${model.id}" class="accordion-collapse collapse" aria-labelledby="#item-${model.id}"
-                 data-bs-parent="#accordionExample">
-                <div class="accordion-body" id="accordeon-body-${model.id}">
-                ${insertCodes(model.id)}
-                </div>
-            </div>
-        </div>
-    `
-}
-
-function insertCodes(id) {
-    let j = 0;
-    return file.phrases.find(p => p.id === id).codes.map(c => {
-        c.id = j++;
-        return `
-            <div class="row p-3 my-1 mx-auto shadow bg-white rounded">
+    file = JSON.parse(response);
+    file.phrases.forEach(phrase => {
+        phrase.codes.map(c => c.code).map(JSON.parse).forEach(code => {
+            let documentTemplate = `
+            <div class="row p-3 my-1 mx-auto shadow bg-white rounded" id=${i}>
                 <div class="w-75">
-                    <p id="phrase-${id}-code-${j}">${JSON.stringify(c)}</p>
+                    <p>${code.word} ${fixedNum(code.page)} ${fixedNum(code.line)} ${fixedNum(code.wordPos)}</p>
                 </div>
-<!--                <button type="button" class="btn btn-warning w-25" onclick="save(${j},${id})">Delete</button>-->
-                <div>
-                    <input type="checkbox" id="phrase-${id}-code-${j}-checkbox" name="codeCheckbox" checked>
-<!--                    <label for="scales">Scales</label>-->
-                </div>
+                <button type="button" class="btn btn-warning w-25" onclick='save(${JSON.stringify(code)})'>Save</button>
             </div>
-        `
+        `;
+            document.getElementById("result").insertAdjacentHTML("beforeend", documentTemplate);
+            i++;
+        })
     });
 }
 
-function save() {
-    const fileToSend = {phrases: []};
-    document.getElementsByName("codeCheckbox").forEach(v => {
-        if (v.checked){
-            let phrase = file.phrases.find(p => p.id === v.id.split("-")[1]);
-            fileToSend.phrases.push(phrase);
-            JSON.parse(v.parentElement.parentElement.getElementsByTagName("p").item(0).innerHTML);
+function fixedNum(num){
+    return num.toString().padStart(3, "0")
+}
+
+function save(code){
+    if (!file.id) {
+        saveFile({});
+    }
+    if (!file.phrases.some(p => p.text === code.word)){
+        file.phrases.push({
+            text: code.word,
+            codes: [].push({code: JSON.stringify(code)})
+        })
+    } else {
+        file.phrases.find(p => p.text === code.word).codes.push({code: JSON.stringify(code)})
+    }
+    saveFile(file)
+}
+
+function saveFile(fileToSave){
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            file = JSON.parse(xhr.responseText);
         }
-    })
-    const code = JSON.parse(document.getElementById(`phrase-${id}-code-${j++}`).innerHTML);
-    const phrase = file.phrases.find(p => p.id === id);
-
+    }
+    xhr.open("POST", "/api/file");
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(fileToSave));
 }
 
-function del(id) {
-    document.getElementById(id).remove();
-}
-
-function clearAll() {
+function clearAll(){
     document.getElementById("result").innerHTML = "";
 }
 
@@ -85,7 +69,7 @@ function sendData() {
 }
 
 
-function getCurrentUser() {
+function getCurrentUser(){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -98,7 +82,7 @@ function getCurrentUser() {
 
 function currentUserCallback(response) {
     const user = JSON.parse(response);
-    if (user.username === 'admin') {
+    if (user.username === 'admin'){
         document.getElementById("nav").insertAdjacentHTML("beforeend", `<a href='/admin/index.html'>Admin panel</a>`);
     }
 }
