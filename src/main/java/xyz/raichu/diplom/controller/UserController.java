@@ -2,6 +2,7 @@ package xyz.raichu.diplom.controller;
 
 import org.springframework.web.bind.annotation.*;
 import xyz.raichu.diplom.entity.User;
+import xyz.raichu.diplom.model.ChangePasswordRequest;
 import xyz.raichu.diplom.service.UserService;
 
 import java.util.List;
@@ -29,6 +30,11 @@ public class UserController {
     @GetMapping("/me")
     public User getMe(){
         return userService.getCurrentUser();
+    }
+
+    @PostMapping("/change")
+    public User change(@RequestBody ChangePasswordRequest request){
+        return userService.change(request);
     }
 
     @PostMapping("/{id}")

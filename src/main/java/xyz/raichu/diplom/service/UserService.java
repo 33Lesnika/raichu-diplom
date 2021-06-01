@@ -4,9 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.exception.AlreadyExistsException;
+import xyz.raichu.diplom.exception.BadRequestException;
 import xyz.raichu.diplom.exception.NotFoundException;
+import xyz.raichu.diplom.model.ChangePasswordRequest;
 import xyz.raichu.diplom.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -77,5 +80,30 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         user.setEnabled(!user.isEnabled());
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public User change(ChangePasswordRequest request) {
+        ensureRequestIsValid(request);
+        var currentUser = getCurrentUser();
+        if (StringUtils.hasText(request.getNewusername())) {
+            currentUser.setUsername(request.getNewusername());
+        }
+        if (StringUtils.hasText(request.getPass())) {
+            currentUser.setPassword(passwordEncoder.encode(request.getPass()));
+        }
+        return userRepository.save(currentUser);
+    }
+
+    private void ensureRequestIsValid(ChangePasswordRequest request) {
+        if (request.getNewusername() == null) {
+            throw new BadRequestException("New username must not be null");
+        }
+        if (request.getPass() == null) {
+            throw new BadRequestException("New password must not be null");
+        }
+        if (!request.getPass().equals(request.getPassRepeat())) {
+            throw new BadRequestException("Passwords does not match");
+        }
     }
 }

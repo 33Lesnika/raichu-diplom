@@ -28,4 +28,26 @@ function callback(response) {
     });
 }
 
+async function change(){
+    let newusername = document.getElementById("newusername").value;
+    let pass = document.getElementById("pass").value;
+    let passRepeat = document.getElementById("passRepeat").value;
+    let response = await fetch(`/api/user/change`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            newusername: newusername,
+            pass: pass,
+            passRepeat: passRepeat
+        })
+    });
+
+    if (response.ok) { // if HTTP-status is 200-299
+        // get the response body (the method explained below)
+        return await response.json();
+    } else {
+        alert("HTTP-Error: " + response.status);
+    }
+}
+
 sendData();
