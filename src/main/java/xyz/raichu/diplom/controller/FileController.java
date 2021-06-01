@@ -1,8 +1,9 @@
 package xyz.raichu.diplom.controller;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import xyz.raichu.diplom.entity.File;
-import xyz.raichu.diplom.repository.FileRepository;
+import xyz.raichu.diplom.service.FileService;
 
 /**
  * 01.06.2021
@@ -13,20 +14,24 @@ import xyz.raichu.diplom.repository.FileRepository;
 @RequestMapping("/api/file")
 public class FileController {
 
-    private final FileRepository fileRepository;
+    private final FileService fileService;
 
-
-    public FileController(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
     }
 
     @GetMapping("/{id}")
     public File get(@PathVariable Long id){
-        return fileRepository.getOne(id);
+        return fileService.getOne(id);
+    }
+
+    @GetMapping("/download/{id}")
+    public StreamingResponseBody downloadFile(@PathVariable Long id){
+        return (outputStream -> fileService.export(id, outputStream));
     }
 
     @PostMapping
     public File save(@RequestBody File file){
-        return fileRepository.save(file);
+        return fileService.save(file);
     }
 }
