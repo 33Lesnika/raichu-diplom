@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import xyz.raichu.diplom.entity.File;
 import xyz.raichu.diplom.entity.Phrase;
+import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.model.DocumentPosition;
 import xyz.raichu.diplom.repository.FileRepository;
 
@@ -22,17 +23,19 @@ import java.io.OutputStreamWriter;
 public class FileService {
     private final FileRepository repository;
     private final ObjectMapper mapper;
+    private final UserService userService;
 
-    public FileService(FileRepository repository, ObjectMapper mapper) {
+    public FileService(FileRepository repository, ObjectMapper mapper, UserService userService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.userService = userService;
     }
 
     public void export(File file, OutputStream outputStream) throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(outputStream);
         file.getPhrases().forEach(phrase -> {
             try {
-                writer.write(file.getName() + " " + format(phrase));
+                writer.write(format(phrase, file.getName()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -40,19 +43,16 @@ public class FileService {
         writer.close();
     }
 
-    private String format(Phrase phrase) {
-        StringBuilder sb = new StringBuilder(phrase.getText());
-        sb.append(" ");
+    private String format(Phrase phrase, String filename) {
+        StringBuilder sb = new StringBuilder();
         phrase.getCodes().forEach(code -> {
             try {
                 var dp = mapper.readValue(code.getCode(), DocumentPosition.class);
-                sb.append(String.format("%03d %03d %03d", dp.getPage(), dp.getLine(), dp.getWordPos()));
-                sb.append(" ");
+                sb.append(String.format("%s %s %03d %03d %03d%n", filename, phrase.getText(), dp.getPage(), dp.getLine(), dp.getWordPos()));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         });
-        sb.append("\n");
         return sb.toString();
     }
 
@@ -63,5 +63,10 @@ public class FileService {
 
     public File getOne(Long id) {
         return repository.getOne(id);
+    }
+
+    public Iterable<File> getMyFiles(){
+        var currentUser = userService.getCurrentUser();
+        return repository.findAllByUser(currentUser);
     }
 }

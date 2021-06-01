@@ -5,13 +5,14 @@ function sendData() {
             callback(xhr.responseText);
         }
     }
-    xhr.open("GET", "/api/admin");
+    xhr.open("GET", "/api/file");
     xhr.send();
 }
 
 function callback(response) {
     JSON.parse(response).map(file => {
         return {
+            id: file.id,
             name: file.name,
             text: file.phrases.map(phrase => phrase.text),
             username: file.user?.username
@@ -21,6 +22,7 @@ function callback(response) {
             <div class="card-content">
                 ${dp.name} ${dp.username} ${dp.text.join(";")}
             </div>
+            <a href="/api/file/download/${dp.id}">Download</a>
         `;
         document.getElementById("result").insertAdjacentHTML("afterbegin", documentTemplate);
     });

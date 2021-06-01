@@ -31,6 +31,11 @@ public class FileController {
         return fileService.getOne(id);
     }
 
+    @GetMapping
+    public Iterable<File> getMyFiles(){
+        return fileService.getMyFiles();
+    }
+
     @GetMapping("/download/{id}")
     public StreamingResponseBody downloadFile(HttpServletResponse response, @PathVariable Long id){
         var file = fileService.getOne(id);
