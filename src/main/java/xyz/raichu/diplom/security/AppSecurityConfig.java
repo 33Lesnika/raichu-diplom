@@ -41,7 +41,10 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/js/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
+                .formLogin().permitAll()
+                .loginPage("/login")
+                .loginProcessingUrl("/perform-login")
+                .defaultSuccessUrl("/");
         ;
     }
 
