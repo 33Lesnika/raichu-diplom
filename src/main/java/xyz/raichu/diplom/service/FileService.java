@@ -2,10 +2,11 @@ package xyz.raichu.diplom.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import xyz.raichu.diplom.entity.File;
 import xyz.raichu.diplom.entity.Phrase;
-import xyz.raichu.diplom.entity.User;
 import xyz.raichu.diplom.model.DocumentPosition;
 import xyz.raichu.diplom.repository.FileRepository;
 
@@ -13,6 +14,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Set;
 
 /**
  * 02.06.2021
@@ -20,6 +22,7 @@ import java.io.OutputStreamWriter;
  * 01:02
  */
 @Service
+@Slf4j
 public class FileService {
     private final FileRepository repository;
     private final ObjectMapper mapper;
@@ -56,16 +59,46 @@ public class FileService {
         return sb.toString();
     }
 
+    @SneakyThrows
     @Transactional
     public File save(File file) {
-        return repository.save(file);
+        file.setUser(userService.getCurrentUser());
+        if (file.getId() == null) {
+            return repository.save(file);
+        } else {
+            var savedFile = repository.getOne(file.getId());
+            file.getPhrases().forEach(phrase -> {
+                if (phrase.getId() == null) {
+                    savedFile.getPhrases().add(phrase);
+                } else {
+                    var savedPhrase = search(phrase.getId(), savedFile.getPhrases());
+                    if (savedPhrase == null) {
+                        savedFile.getPhrases().add(phrase);
+                    } else {
+                        phrase.getCodes().stream()
+                                .filter(code -> code.getId() == null)
+                                .forEach(savedPhrase.getCodes()::add);
+                    }
+                }
+            });
+            return repository.save(savedFile);
+        }
+    }
+
+    private Phrase search(Long id, Set<Phrase> phraseSet) {
+        for (Phrase phrase : phraseSet) {
+            if (phrase.getId().equals(id)) {
+                return phrase;
+            }
+        }
+        return null;
     }
 
     public File getOne(Long id) {
         return repository.getOne(id);
     }
 
-    public Iterable<File> getMyFiles(){
+    public Iterable<File> getMyFiles() {
         var currentUser = userService.getCurrentUser();
         return repository.findAllByUser(currentUser);
     }

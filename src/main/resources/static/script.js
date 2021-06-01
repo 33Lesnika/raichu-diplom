@@ -1,5 +1,6 @@
 let i = 0;
 let file = {};
+
 function callback(response) {
     file = JSON.parse(response);
     file.phrases.forEach(phrase => {
@@ -18,38 +19,42 @@ function callback(response) {
     });
 }
 
-function fixedNum(num){
+function fixedNum(num) {
     return num.toString().padStart(3, "0")
 }
 
-function save(code){
+async function save(code) {
+    console.log(code);
     if (!file.id) {
-        saveFile({});
+        file = await saveFile({name: file.name});
     }
-    if (!file.phrases.some(p => p.text === code.word)){
+    if (!file.phrases.some(p => p.text === code.word)) {
         file.phrases.push({
             text: code.word,
-            codes: [].push({code: JSON.stringify(code)})
+            codes: [{code: JSON.stringify(code)}]
         })
     } else {
         file.phrases.find(p => p.text === code.word).codes.push({code: JSON.stringify(code)})
     }
-    saveFile(file)
+    file = await saveFile(file)
 }
 
-function saveFile(fileToSave){
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            file = JSON.parse(xhr.responseText);
-        }
+async function saveFile(fileToSave) {
+    let response = await fetch(`/api/file`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(fileToSave)
+    });
+
+    if (response.ok) { // if HTTP-status is 200-299
+        // get the response body (the method explained below)
+        return await response.json();
+    } else {
+        alert("HTTP-Error: " + response.status);
     }
-    xhr.open("POST", "/api/file");
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhr.send(JSON.stringify(fileToSave));
 }
 
-function clearAll(){
+function clearAll() {
     document.getElementById("result").innerHTML = "";
 }
 
@@ -69,7 +74,7 @@ function sendData() {
 }
 
 
-function getCurrentUser(){
+function getCurrentUser() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
@@ -82,7 +87,7 @@ function getCurrentUser(){
 
 function currentUserCallback(response) {
     const user = JSON.parse(response);
-    if (user.username === 'admin'){
+    if (user.username === 'admin') {
         document.getElementById("nav").insertAdjacentHTML("beforeend", `<a href='/admin/users.html'>Admin panel</a>`);
     }
 }
