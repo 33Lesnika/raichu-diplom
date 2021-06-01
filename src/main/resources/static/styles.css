@@ -1,0 +1,108 @@
+:root {
+    /*TEXT*/
+    --text-primary: #31373D;
+    --text-secondary: #8F93AA;
+    --text-success: #06D6A0;
+    --text-warn: #EF476F;
+    --text-light: #FFF;
+    /*ELEMENT*/
+    --primary: #1862A0;
+    --warn: #EF476F;
+    --success: #06D6A0;
+    --disabled: #578DBA;
+    --hover-primary: #1F7ECD;
+}
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    background-color: #EAEAEA;
+}
+
+.page {
+    padding: 40px 0;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    box-shadow: 0 0 15px 0 rgba(0,0,0,0.5);
+    background-color: #FFF;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    border-radius: 5px;
+}
+
+.form-field {
+    width: 100%;
+    min-height: 40px;
+    margin: 10px 0;
+}
+.form-title{
+    color: var(--text-primary);
+}
+.form-field label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    width: 100%;
+    display: inline-block;
+}
+
+.form-field input[type=text] {
+    border: 1px solid var(--text-secondary);
+    border-radius: 5px;
+    height: 40px;
+    width: 100%;
+    padding: 0 15px;
+    color: var(--text-primary);
+    outline: none;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.form-field input[type=text]:active, .form-field input[type=text]:hover {
+    border-color: var(--primary);
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+}
+
+.submit {
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    background-color: var(--primary);
+    color: var(--text-light);
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit:active, .submit:hover {
+    background-color: #1F7ECD;
+}
+
+.form-result {
+    margin-top: 15px;
+    border-top: 2px dashed #DAE0EB;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 18px;
+    color: var(--text-primary);
+    font-weight: bold;
+}

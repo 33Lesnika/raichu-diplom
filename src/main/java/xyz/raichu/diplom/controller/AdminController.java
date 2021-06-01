@@ -23,6 +23,6 @@ public class AdminController {
 
     @GetMapping
     public Iterable<File> getAll(){
-        return fileRepository.findAll();
+        return fileRepository.findAllByNameIsNotNullAndPhrasesIsNotNull();
     }
 }

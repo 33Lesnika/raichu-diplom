@@ -83,7 +83,7 @@ function getCurrentUser(){
 function currentUserCallback(response) {
     const user = JSON.parse(response);
     if (user.username === 'admin'){
-        document.getElementById("nav").insertAdjacentHTML("beforeend", `<a href='/admin/index.html'>Admin panel</a>`);
+        document.getElementById("nav").insertAdjacentHTML("beforeend", `<a href='/admin/users.html'>Admin panel</a>`);
     }
 }
 

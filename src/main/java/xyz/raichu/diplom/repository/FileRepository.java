@@ -9,4 +9,5 @@ import xyz.raichu.diplom.entity.File;
  * 04:17
  */
 public interface FileRepository extends JpaRepository<File, Long> {
+    Iterable<File> findAllByNameIsNotNullAndPhrasesIsNotNull ();
 }

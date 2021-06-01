@@ -5,17 +5,23 @@ function sendData() {
             callback(xhr.responseText);
         }
     }
-    xhr.open("GET", "http://localhost/api/admin");
+    xhr.open("GET", "/api/admin");
     xhr.send();
 }
 
 function callback(response) {
-    JSON.parse(response).forEach(dp => {
+    JSON.parse(response).map(file => {
+        return {
+            name: file.name,
+            text: file.phrases.map(phrase => phrase.text),
+            usernames: file.user?.username
+        }
+    }).forEach(dp => {
         let documentTemplate = `
-            <div class="row p-3 my-1 mx-auto shadow bg-white rounded">
-                <div class="w-75">
+            <div class="card-content">
+                
                     <p>${JSON.stringify(dp)}</p>
-                </div>
+                
             </div>
         `;
         document.getElementById("result").insertAdjacentHTML("afterbegin", documentTemplate);
