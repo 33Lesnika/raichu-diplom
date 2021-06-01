@@ -28,21 +28,19 @@ public class FileService {
         this.mapper = mapper;
     }
 
-    public void export(Long id, OutputStream outputStream) throws IOException {
+    public void export(File file, OutputStream outputStream) throws IOException {
         OutputStreamWriter writer = new OutputStreamWriter(outputStream);
-        repository.findById(id).ifPresent(file -> {
-            file.getPhrases().forEach(phrase -> {
-                try {
-                    writer.write(file.getName() + " " + format(phrase));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+        file.getPhrases().forEach(phrase -> {
+            try {
+                writer.write(file.getName() + " " + format(phrase));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
         writer.close();
     }
 
-    private String format(Phrase phrase){
+    private String format(Phrase phrase) {
         StringBuilder sb = new StringBuilder(phrase.getText());
         sb.append(" ");
         phrase.getCodes().forEach(code -> {
@@ -59,11 +57,11 @@ public class FileService {
     }
 
     @Transactional
-    public File save(File file){
+    public File save(File file) {
         return repository.save(file);
     }
 
-    public File getOne(Long id){
+    public File getOne(Long id) {
         return repository.getOne(id);
     }
 }
